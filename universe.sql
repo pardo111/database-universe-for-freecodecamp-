@@ -1,5 +1,7 @@
+CREATE DATABASE universe;
+
 CREATE TABLE galaxy (galaxy_id serial not null,
-					 galaxy_name varchar(30) not null,
+					 name varchar(30) not null UNIQUE,
 					 type_galaxy varchar(30),
 					discovery numeric,
 					color_galaxy text,
@@ -8,7 +10,7 @@ CREATE TABLE galaxy (galaxy_id serial not null,
 
 
 CREATE TABLE star (star_id serial not null,
-					 star_name varchar(30) not null,
+					  name varchar(30) not null UNIQUE,
 					galaxy_id int not null ,
 					 has_planet boolean,
 					type_star text,
@@ -16,7 +18,7 @@ CREATE TABLE star (star_id serial not null,
 				  foreign key (galaxy_id) REFERENCES galaxy (galaxy_id));
 				  
 CREATE TABLE planet (planet_id serial not null,
-					 planet_name varchar(30) not null,
+					  name varchar(30) not null UNIQUE,
 					star_id int not null ,
 					 has_moon boolean,
 					size_planet text,
@@ -25,31 +27,41 @@ CREATE TABLE planet (planet_id serial not null,
 				  
 				  
 
-CREATE TABLE star_planet(star_id int not null,
-						planet_id int not null,
-						PRIMARY KEY(star_id,planet_id),
-						 FOREIGN KEY(planet_id) REFERENCES planet (planet_id),
-						 FOREIGN KEY(star_id) REFERENCES star (star_id) );				  
+ 
+
+
+
+
+CREATE TABLE star_planet(
+							name varchar(30),
+						 star_planet_id varchar(1) UNIQUE,
+						star_id int not null,
+						planet_id int not null UNIQUE,
+						PRIMARY KEY(  star_planet_id ),
+						FOREIGN KEY(planet_id) REFERENCES planet (planet_id),
+						FOREIGN KEY(star_id) REFERENCES star (star_id) );				  
 				  
  
 
 CREATE TABLE moon(moon_id  serial not null,
 			 planet_id int not null,
-			 moon_name varchar(30) not null,
+			  name varchar(30) not null UNIQUE,
 			 size_km numeric,
 			 temperature numeric 
 			,PRIMARY KEY( moon_id));					  
 				  
 
-CREATE TABLE  planet_moon(moon_id int not null,
+CREATE TABLE  planet_moon( planet_moon_id  varchar(1) UNIQUE,
+						name varchar(30),
+						moon_id int not null UNIQUE,
 						planet_id int not null,
-						PRIMARY KEY(moon_id,planet_id),
-						 FOREIGN KEY(planet_id) REFERENCES planet (planet_id),
-						 FOREIGN KEY(moon_id) REFERENCES moon (moon_id) );			
+						PRIMARY KEY(  planet_moon_id ),
+						FOREIGN KEY(planet_id) REFERENCES planet (planet_id),
+						FOREIGN KEY(moon_id) REFERENCES moon (moon_id) );			
 				  
 				  
 				  	
-INSERT INTO galaxy (galaxy_name,type_galaxy,discovery,color_galaxy ) VALUES ('via lactea', 'espiral', 1610,'blanco'),
+INSERT INTO galaxy ( name,type_galaxy,discovery,color_galaxy ) VALUES ('via lactea', 'espiral', 1610,'blanco'),
 							('andromeda  I','espiral', 1924,'rosa'),
 							('andromeda II', 'enana esferoidal', 1943 , 'rosa'),
 							('Centaurus A','lenticular', null ,'cafe-azul' ),
@@ -58,7 +70,7 @@ INSERT INTO galaxy (galaxy_name,type_galaxy,discovery,color_galaxy ) VALUES ('vi
 							 
 					 
 							 
-INSERT INTO star(galaxy_id , star_name, has_planet , type_star)	values
+INSERT INTO star(galaxy_id ,  name, has_planet , type_star)	values
 							(1,'kepler-438',true, 'enana amarilla'),
 							(1,'Sirio', true, 'Enana blanca' ),
 							(1,'Canopus',true ,'Supergigante blanco-amarilla'),
@@ -75,9 +87,10 @@ INSERT INTO star(galaxy_id , star_name, has_planet , type_star)	values
 							(2,'mirach',true ,'gigante roja'),
 							(2,'6 persei',true ,'gigante amarillo'),
 							(1,'Astro Rey.', true,'es- pectral G2' ),
-							(1,'kepler-22',true, 'enana amarilla');
+							(1,'kepler-22',true, 'enana amarilla'),
+							(1,'Lich1', true ,'pulsar');
 							
- INSERT INTO planet ( planet_name,star_id  , has_moon ,size_planet) values('mercurio',16 , true,2439.7  )	,			  
+ INSERT INTO planet (  name,star_id  , has_moon ,size_planet) values('mercurio',16 , true,2439.7  )	,			  
 				  				('venus', 16, true,6051.8 )	,
 								('tierra',16 , true,6371 )	,
 								('marte', 16, true, 3389.5 )	,
@@ -87,11 +100,12 @@ INSERT INTO star(galaxy_id , star_name, has_planet , type_star)	values
 								('neptuno', 16, true,24622 )	,
 								('pluton', 16, true,1188.3 )	,
 								('kepler-22b ',17 , true,15290 )	,
-								('Kepler-438b', 18 , false, null)	;
+								('Kepler-438b', 18 , false, null),
+								('draugr', 18, false,null)	;
 								
 								
 								
- INSERT INTO moon ( moon_name,planet_id  , temperature ,size_km) values		
+ INSERT INTO moon (  name,planet_id  , temperature ,size_km) values		
 								('luna', 3, null,1737.4 )	,
 								('fobos',4 , null,11.267 )	,
 								('deimos',4 , null,11.4 )	,
@@ -114,51 +128,41 @@ INSERT INTO star(galaxy_id , star_name, has_planet , type_star)	values
 								('S/2003 J 18',5,null ,null);
   
 				  
-INSERT INTO star_planet(planet_id,star_id)values(1,16),	
-												(2,16),
-												(3,16),
-												(4,16),
-												(5,16),
-												(6,16),
-												(7,16),	
-												(8,16),
-												(9,16),
-												(10,17),
-												(11,18);
+INSERT INTO star_planet( star_planet_id,planet_id,star_id)values('a',1,16),	
+												('b',2,16),
+												('c',3,16),
+												('d',4,16),
+												('e',5,16),
+												('f',6,16),
+												('g',7,16),	
+												('h',8,16),
+												('i',9,16),
+												('j',10,17),
+												('k',11,17);
 				  
 				  
  				  
 				  
-INSERT INTO planet_moon (planet_id,moon_id)values (3,1),	
-												(4,2),
-												(4,3),
-												(5,4),
-												(5,5),
-												(5,6),
-												(5,7),	
-												(5,8),
-												(5,9),
-												(5,10),
-												(5,11),
-												(5,12),
- 												(5,13),
-												(5,14),
-												(5,15),
-												(5,16),
-												(5,17),
-												(5,18),	
-												(5,19),
-												(5,20);
-				  
-				  
-				  
-				  
-				  
-				  
-				  
-				  
-				  
-				  
+INSERT INTO planet_moon ( planet_moon_id, planet_id,moon_id)values ('a',3,1),	
+												('b',4,2),
+												('c',4,3),
+												('d',5,4),
+												('e',5,5),
+												('f',5,6),
+												('g',5,7),	
+												('h',5,8),
+												('i',5,9),
+												('j',5,10),
+												('k',5,11),
+												('l',5,12),
+ 												('m',5,13),
+												('n',5,14),
+												('o',5,15),
+												('p',5,16),
+												('q',5,17),
+												('r',5,18),	
+												('s',5,19),
+												('t',5,20);
 				  
 				  
 				  
